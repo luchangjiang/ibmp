@@ -1,0 +1,99 @@
+﻿########################################应用配置##########################################
+gateway:
+  # 权限验证
+  access:
+    # 启用权限验证【必须】
+    enabled: false
+    # 用户ID名称，验证token之后转换，列如：userId、accountId等【默认userId】
+    user-id-name: userId
+    # 登录标识名称，例如：token、sessionId等【默认token】
+    token-name: token
+    # 验证权限接口地址，支持服务ID【必须】
+    user-permission-url: http://user-service/user/hasPermission
+    # 匹配路径：默认所有多个逗号分隔
+    path-patterns: ['/**']
+  # 参数加密安全验证
+  param-safe:
+    enabled: true
+    token-name: token
+    cache-key-pattern: u_%s
+    # 参数加密私钥：文本
+    public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZI1Kb7InHsnWGm6xwLBjgwynPjOH72HR5em95fYupvliD16tpGBT8OXtrihgaTPb0cR5C/FbE98Zp1IX3MvRoSc2fWS1elaYbGsyOlTNdIBGadOZJfy7ZGQB2zjeAwT2tU2u+KNjDmX0dDMgxRhVLLBSEAzx/8pvwg3DiUrFkDwIDAQAB
+    private-key: MIICXgIBAAKBgQDG0dbYYaF69sgShj0R/yrKS26bzwa7aZgHGWH/o7BsNsBXWqkBUOsyTRAVX+h8i3QzrIPSaCR7PgnL4/nVYyGTZ31KhB6R6PWNdGEWD3FDATdCItBjnC8LbInIZ7NB18Nla6coTR+uSE7X8uY9yMrAMKFy9bRbHurkWVyxmcSVhwIDAQABAoGBALmk8iF1eByjFcoGQjvtsPzXVl5x/u07+dKXJuRW6cMBlLN8WdZ6wkJjpqLuvNyeMlCVwzjSOU5CbU9Ofdd8Cro8IZi190TzuNLXXyjYAimnIkf+F+Bgui6TtwQC8jUv6Fp9v96rrz0mhnZ/lrVXFwejSfW6tT2sI9QGpielDqxxAkEA80kdmRoutw18mctrnYr93LJCMjJ6lXRHHbgq5uQowtYosxgs0FOTa3sRYRsh1TubMfkwV90v3Iyxqu4BfepU7QJBANE10fjuZ2qCUqIRETwlkQysoPVCz2my0BjhKXa1lB2UdqK+o1pm0AOPFoobi0Xg/oOsxAPlI9coTnczwC9N2cMCQHLYDAHPC0hcNHqBPV7UUvxQpdD+ZUGR71RHMPFnuRoocHQCsHzzRv8QzGZzoWgASEWx5TFE96f8Po565fdjnA0CQQDBuYKbbbdZiyAVbpR1C5xLDjdlpN4HVEsaHrWUdQOYeHd6r+j3tyh7gy4t6N+Ib5V+PKatrKsJewtdmhAmPYKdAkEA7Yhg3f8EnsIl8B9ZIu1YUUZbtnlOL8ebRG167I7V2UXvYadZ5fx4vfgcmO/I/idu5oc1XVSLzOW/AndHWTq99A==
+    # 参数加密密匙（优先使用private-key配置）
+    #    rsa-key: C:\\RSAKey.txt
+    # 匹配路径：默认所有多个逗号分隔
+    # path-patterns: ['/trade_gateway/**']
+    path-patterns: ['/**']
+  # 开启跨域
+  cors:
+    enabled: true
+    # 非必须的,表示是否允许发送Cookie,注意,当设置为true的时候,客户端的ajax请求,也需要将withCredentials属性设置为true
+    allow-credentials: true
+    # 必须的,允许的域名,如果设置*,则表示接受任何域名
+    allowed-origins: "*"
+    # 非必须的,表示客户端能拿到的header,默认情况下XMLHttpRequest的getResponseHeader方法只能拿到几个基本的header,如果有自定义的header要获取的话,则需要设置此值
+    #exposed-headers:
+    # 必须的,表示CORS上会使用到那些HTTP方法：GET,POST,PUT,DElETE,PATCH,OPTIONS
+    allowed-methods: "*"
+    # 必须的,表示CORS上会有那些额外的的有信息
+    allowed-headers: "*"
+    # Access-Control-Max-Age来控制浏览器在多长时间内（单位s）无需在请求时发送预检请求
+    max-age: 1800
+    # 匹配路径：默认所有多个逗号分隔
+    path-patterns: ['/**']
+  i18n:
+    resolve-type
+# 自定义网关Servlet-Path，防止冲突
+gateway-path: /gateway
+zuul:
+  # 大文件上传、文件中文文件名乱码解决办法一（DispatcherServlet-ZuulServletFilter改成ZuulServlet)
+  servlet-path: /zuul
+  # 解决跨域问题，需要忽略的头部信息，不在传播到其他服务
+  sensitive-headers: Access-Control-Allow-Origin
+  ignored-headers: Access-Control-Allow-Origin
+  # 添加代理头
+  add-proxy-headers: true
+  routes:
+    pcInfoService:
+      path: /pcinfo/**
+      url: forward:/pcinfo
+    customerService:
+      path: /customer/**
+      url: forward:/customer
+    tradeGateway:
+      path: /trade_gateway/**
+      url: http://47.112.141.40:9501
+      stripPrefix: false
+    tradeGXSocket:
+      path: /GXSocket/**
+      url: http://47.112.141.40:17712/Handle.aspx
+      stripPrefix: false
+  max:
+    host:
+      connections: 500
+  host:
+    connect-timeout-millis: 10000
+    socket-timeout-millis: 10000
+ribbon:
+  eureka:
+    enable: false
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          #          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 10000
+spring:
+  redis:
+    host: 10.10.11.71
+    port: 6510
+    database: 1

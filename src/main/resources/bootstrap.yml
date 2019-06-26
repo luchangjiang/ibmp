@@ -1,0 +1,39 @@
+﻿﻿########################################本地启动配置##########################################
+#http端口配置
+server:
+  port: 1081
+  connection-timeout: 5000
+  tomcat:
+    max-http-post-size: -1
+# 注册中心配置
+eureka:
+  instance:
+    non-secure-port: ${K8_SERVICE_PORT:1080}
+    secure-port-enabled: false
+    hostname: ${K8_SERVICE_NAME:localhost}
+    # prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_USER:river}:${EUREKA_PASSWORD:river}@${EUREKA_HOSTNAME:localhost}:${EUREKA_PORT:9999}/eureka/
+spring:
+  application:
+    name: middleware-ibmp
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: eddid-config
+      label: master
+      name: eddid
+      profile: ibmp-route
+  freemarker:
+    request-context-attribute: request
+
+logging:
+  level:
+    com:
+      ibmp:
+        route:
+          param: debug
+          
+

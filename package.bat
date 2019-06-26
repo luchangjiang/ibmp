@@ -1,0 +1,1 @@
+@call mvn -P package clean package&pause&explorer .\target&exit
